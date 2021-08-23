@@ -13,5 +13,4 @@ RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /opt/yp/yp
 # alpine 3.10.3
 FROM alpine:3.11
 COPY --from=builder /opt/yp/yp /usr/bin/yp
-EXPOSE 8080
 ENTRYPOINT ["/usr/bin/yp"]
