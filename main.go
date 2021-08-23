@@ -2,13 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+const default_port = ":8080"
 
 // YoulessCollector implements the Collector interface
 //[{"tm":1575316361,"net": 1133.932,"pwr": 431,"ts0":1535271600,"cs0": 0.000,"ps0": 0,"p1": 4590.448,"p2": 4315.399,"n1": 2320.876,"n2": 5451.039,"gas": 2878.709,"gts":1912022000}]
@@ -120,6 +124,12 @@ func main() {
 		&YoulessCollector{url: "http://youless/e"},
 	)
 
+	port := default_port
+	envPort := os.Getenv("PORT")
+	if envPort != "" {
+		port = fmt.Sprintf(":%s", envPort)
+	}
+
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(port, nil))
 }
